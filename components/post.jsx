@@ -3,7 +3,9 @@ import Image from "next/image"
 import heart from '../public/heart.png' 
 import like from '../public/like.png'
 
-const Post = ({post}) => { 
+const Post = ({post}) => {  
+
+    
     
 
      return(

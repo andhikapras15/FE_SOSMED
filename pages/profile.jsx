@@ -120,8 +120,8 @@ const Profile = ({editBioActions}) => {
                                     <ModalCloseButton />
                                     <ModalBody> 
                                         <input type="file" name="image" accept=".gif,.jpg,.jpeg,.png" onChange={onFileChange}/> 
-                                        {profilepic && selectedImage.filePreview ? <img src={selectedImage.filePreview} alt="" className="object-cover w-28 h-28 ring-4 rounded-full ring-darkprimary"/> : null}
-                                        {!profilepic && selectedImage.filePreview ? <img src={selectedImage.filePreview} alt="" className="object-cover w-28 h-28 ring-4 rounded-full ring-darkprimary"/> : null}
+                                        {profilepic && selectedImage.filePreview ? <img src={selectedImage.filePreview} alt="" className="object-cover w-36 h-36 mt-8 ml-36 rounded-full flex justify-center items-center"/> : null}
+                                        {!profilepic && selectedImage.filePreview ? <img src={selectedImage.filePreview} alt="" className="object-cover w-28 h-28 mt-8 rounded-full "/> : null}
                                     </ModalBody>
 
                                     <ModalFooter>
