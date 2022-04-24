@@ -2,8 +2,15 @@ import {MdPermMedia, MdLocationOn, MdEmojiEmotions} from "react-icons/md"
 import {BsFillTagFill} from "react-icons/bs" 
 import Image from "next/dist/client/image" 
 import { useState } from "react"
+import { postActions } from "../redux/actions/postActions"
+import axios from "axios"
+import { API_URL } from "../helpers" 
+import Cookies from "js-cookie"
 
 const Share = () => {  
+    const [input,setInput] = useState({
+        caption:""
+    })
 
     const [selectedImage,setelectedImage] = useState({
         file:[], 
@@ -15,21 +22,49 @@ const Share = () => {
         if(e.target && e.target.files[0]){
             setelectedImage({...selectedImage,file:e.target.files[0],filePreview:URL.createObjectURL(e.target.files[0])})
         }
+    }  
+    
+    const onFileCaptionChange = (e) => {
+        setInput({...input,[e.target.name]:e.target.value})
     }
+
+    // const savePostClick = async (e) => {
+    //     e.preventDefault() 
+    //     postActions(input) 
+    //     console.log(input)
+    // } 
+    const onSavePostClick =async () => {
+        let token = Cookies.get('token')  
+        const formData = new FormData() 
+
+        formData.append(`post`,selectedImage.file) 
+        formData.append('caption', input.caption) 
+
+        try { 
+            await axios.post(`${API_URL}/post/post`,formData,{
+                headers: { 
+                    authorization: `bearer ${token}`
+                }
+            })
+        } catch (error) { 
+            console.log(error) 
+        }
+    }
+
     return (
-        <div className="w-full h-44 rounded-xl shadow-xl p-3 ">
+        <div className="w-full min-sh-44 rounded-xl shadow-xl p-3 ">
             <div className="flex items-center"> 
                 <img src={"/profile1.jpg"} className="w-12 h-12 rounded-full object-cover mr-3"/> 
-                <input placeholder="What's in your mind ?" className="border-0 w-[80%] focus:outline-none"/>
+                <input placeholder="What's in your mind ?" name="caption" value={input.caption} className="border-0 w-[80%] focus:outline-none" onChange={onFileCaptionChange}/>
             </div> 
             <hr className="m-5"/>
             <div className="flex items-center justify-between">
                 <div className="flex items-center ml-5  cursor-pointer">  
-                    <label for="postimage" onChange={onFilePostChange}>
-                        <input type="file" name="postimage" id="postimage" accept=".gif,.jpg,.jpeg,.png" hidden></input>
+                    <label for="postimage">
+                        <input type="file" id="postimage" accept=".gif,.jpg,.jpeg,.png" hidden onChange={onFilePostChange}></input>
                         <MdPermMedia className="text-lg mr-1 text-red-400 cursor-pointer"/> 
-                        {profilepic && selectedImage.filePreview ? <img src={selectedImage.filePreview} alt="" /> : null}
-                        {!profilepic && selectedImage.filePreview ? <img src={selectedImage.filePreview} alt="" /> : null}
+                        {/* {postimage && selectedImage.filePreview ? <img src={selectedImage.filePreview} alt="" /> : null}
+                        {!postimage && selectedImage.filePreview ? <img src={selectedImage.filePreview} alt="" /> : null} */}
                     </label>
                     <span className="text-sm font-medium">Photo or Video</span>
                 </div> 
@@ -45,7 +80,7 @@ const Share = () => {
                     <MdEmojiEmotions className="text-lg mr-1"/>
                     <span className="text-sm font-medium">Feelings</span>
                 </div>
-                <button className="border-0 p-2 rounded-md bg-green-500 font-medium mr-5 text-white">Share</button>
+                <button className="border-0 p-2 rounded-md bg-green-500 font-medium mr-5 text-white" onClick={onSavePostClick}>Share</button>
             </div>
         </div>
     )
