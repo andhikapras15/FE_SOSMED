@@ -8,54 +8,75 @@ import * as Yup from "yup"
 import { 
     InputRightElement, 
     Button, 
- } from "@chakra-ui/react";
+ } from "@chakra-ui/react"; 
+import { useFormik } from "formik";
 
 
 const Register = ({registerActions}) => {   
 
-    const[input,setinput] = useState({
-        username: '', 
-        password: '',
-        confirmPassword: '', 
-        email: ''
-    })  
-
+    // const[input,setinput] = useState({
+    //     username: '', 
+    //     password: '',
+    //     confirmPassword: '', 
+    //     email: ''
+    // })  
+    
     const {isLogin} = useSelector((state)=> state.user)
-    const handleInput = (e,prop) => {
-        setinput({...input, [prop]: e.target.value})
-    }   
-
+    // const handleInput = (e,prop) => {
+    //     setinput({...input, [prop]: e.target.value})
+    // }   
+    
     const [show, setShow] = React.useState(false)
-    const handleClick = () => setShow(!show)
+    const handleClick = () => setShow(!show) 
 
-    // const validationSchema = Yup.object().shape({
-    //     username: Yup.string()
-    //         .required('username is required'),
-    //     email: Yup.string()
-    //         .required('email is required')
-    //         .email('email is invalid'),
-    //     password: Yup.string()
-    //         .required('password is required')
-    //         .min(8,'password must be at least 8 characters')
-    //         .matches(/^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8-20}$/, 'password must be at least 1 number, 1 letter, and 1 special characters'), 
-    //     confirmPassword: Yup.string()
-    //         .required('confirm password is required')
-    //         .oneOf([Yup.ref('password'), null], 'Passwords must match')
-    // })
+    const [dissableButton, setdissableButton]  = useState(false)
+    
+    const formik = useFormik ({
+        initialValues: {
+            username: '', 
+            password: '',
+            confirmPassword: '', 
+            email: ''
+        },
+        validationSchema: Yup.object().shape({
+            username: Yup.string()
+            .required('username is required'),
+            email: Yup.string()
+            .required('email is required')
+            .email('email is invalid'),
+            password: Yup.string()
+            .required('password is required')
+            .min(8,'password must be at least 8 characters'),
+            // .matches(/^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8-20}$/, 'password must be at least 1 number, 1 letter, and 1 special characters'), 
+            confirmPassword: Yup.string()
+            .required('confirm password is required')
+            .oneOf([Yup.ref('password'), null], 'Passwords must match')
+        }), 
+        onSubmit: async(values) => {
+            try {
+                registerActions(values) 
+                setdissableButton(true)
+            } catch (error) {
+                console.log(error)
+            } finally {
+                setdissableButton(false)
+            }
+        }
+    }) 
 
-    const registerHandle = (e) => {
-        e.preventDefault()
-        if(input.password !== input.confirmPassword){
-            toast.error("password tidak sama dengan confirm", {
-                position: "top-right",
-                autoClose: 3000,
-                closeOnClick: true,
-                draggable: true,
-            }) 
-            return
-        } 
-        registerActions(input)
-    } 
+    // const registerHandle = (e) => {
+    //     e.preventDefault()
+    //     if(input.password !== input.confirmPassword){
+    //         toast.error("password tidak sama dengan confirm", {
+    //             position: "top-right",
+    //             autoClose: 3000,
+    //             closeOnClick: true,
+    //             draggable: true,
+    //         }) 
+    //         return
+    //     } 
+    //     registerActions(input)
+    // } 
     
     return (
         <div className="h-[100vh] bg-purple-600 flex items-center justify-center">
@@ -66,28 +87,22 @@ const Register = ({registerActions}) => {
                 </div>
                 <div className="basis-1/2 p-6">  
                     <div className="h-min-full p-5 bg-white rounded-xl flex flex-col justify-between" >
-                        <form onSubmit={registerHandle} className="h-[350px]"> 
+                        <form onSubmit={formik.handleSubmit} className="h-[350px]"> 
                             <div>
-                                <input className="h-12 w-full rounded-xl border-[1px] border-gray-400 text-lg pl-5 focus:outline-none" placeholder="Username" onChange={(e) => handleInput(e, 'username')} value={input.username}></input> 
-                                <div></div>
-                                
+                                <input name="username" className="h-12 w-full rounded-xl border-[1px] border-gray-400 text-lg pl-5 focus:outline-none" placeholder="Username" onChange={formik.handleChange} value={formik.values.username} required></input>
+                                {formik.touched.username && formik.errors.username ? <p>{formik.errors.username}</p> : null}   
                             </div> 
                             <div>
-                                <input className="h-12 w-full rounded-xl border-[1px] border-gray-400 text-lg pl-5 focus:outline-none" placeholder="Email" onChange={(e) => handleInput(e, 'email')} value={input.email} ></input> 
-                                
+                                <input name="email" className="h-12 w-full rounded-xl border-[1px] border-gray-400 text-lg pl-5 focus:outline-none" placeholder="Email" onChange={formik.handleChange} value={formik.values.email} required></input>  
+                                {formik.touched.email && formik.errors.email ? <p>{formik.errors.email}</p> : null}   
                             </div>
-                            <div className="flex items-end ">
-                                <input type="password" className="h-12 w-full rounded-xl border-[1px] border-gray-400 text-lg pl-5 focus:outline-none" placeholder="Password" onChange={(e) => handleInput(e, 'password')} value={input.password}/>
-                                {/* <InputRightElement width='4.5rem'>
-                                    <Button h='1.75rem' size='sm' onClick={handleClick}>
-                                        {show ? 'Hide' : 'Show'}
-                                    </Button>
-                                </InputRightElement>   */}
-                 
+                            <div>
+                                <input name="password" type="password" className="h-12 w-full rounded-xl border-[1px] border-gray-400 text-lg pl-5 focus:outline-none" placeholder="Password" onChange={formik.handleChange} value={formik.values.password} required></input>
+                                {formik.touched.password && formik.errors.password ? <p>{formik.errors.password}</p> : null}   
                             </div> 
                             <div>
-                                <input type="password" className="h-12 w-full rounded-xl border-[1px] border-gray-400 text-lg pl-5 focus:outline-none" placeholder="Confirm Password" onChange={(e) => handleInput(e, 'confirmPassword')} value={input.confirmPassword} ></input>
-                                
+                                <input name="confirmPassword" type="password" className="h-12 w-full rounded-xl border-[1px] border-gray-400 text-lg pl-5 focus:outline-none" placeholder="Confirm Password" onChange={formik.handleChange} value={formik.values.confirmPassword} required></input>
+                                {formik.touched.confirmPassword && formik.errors.confirmPassword ? <p>{formik.errors.confirmPassword}</p> : null}   
                             </div>
                             <button type="submit" className="w-full mb-4 h-12 self-center rounded-xl border-0 bg-green-500 text-white text-xl font-medium cursor-pointer">Register</button>
                         </form>

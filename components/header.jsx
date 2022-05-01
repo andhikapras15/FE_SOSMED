@@ -2,8 +2,16 @@ import {BsSearch, BsFillPersonFill, BsFillChatLeftTextFill, } from "react-icons/
 import {AiOutlineNotification} from "react-icons/ai" 
 import Image from "next/image"  
 import Link from "next/link"
+import { Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react"
+import Router from "next/router" 
+import Cookies from 'js-cookie'
 
-const Header = () => {
+const Header = () => { 
+    const logOut = () => {
+        Cookies.remove('token')
+        Router.push('/login')
+    } 
+
     return (
         <div className="w-full h-[55px] flex items-center px-10 py-4 bg-purple-600 sticky top-0">
             <div className="basis-2/12 "> 
@@ -34,9 +42,19 @@ const Header = () => {
                         <span>3</span>
                     </div>
                 </div>  
-                <Link href='/profile'>
-                    <img src={"/profile1.jpg"} className="w-[32px] h-[32px] rounded-full object-cover cursor-pointer"/>
-                </Link>
+                {/* <Link href='/profile'> */} 
+                <Menu>
+                    <MenuButton>
+                        <img src={"/profile1.jpg"} className="w-[32px] h-[32px] rounded-full object-cover cursor-pointer"/>
+                    </MenuButton>
+                    <MenuList>
+                        <Link href="/profile">
+                            <MenuItem>profile</MenuItem>
+                        </Link>
+                        <MenuItem onClick={logOut}>Log Out</MenuItem>
+                    </MenuList>
+                </Menu>
+                {/* </Link> */}
             </div>
         </div>
     )

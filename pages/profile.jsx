@@ -27,6 +27,7 @@ import { API_URL} from "../helpers"
 import Cookies from 'js-cookie'
 import { editBioActions} from "../redux/actions/userActions" 
 import { connect } from "react-redux"
+import FeedProfile from "../components/feedProfile"
   
 
 const Profile = ({editBioActions}) => { 
@@ -82,7 +83,7 @@ const Profile = ({editBioActions}) => {
                 headers: {
                     authorization: `bearer ${token}`
                 }
-            })  
+            })   
             profilepicClose()
 
         } catch (error) {
@@ -174,7 +175,7 @@ const Profile = ({editBioActions}) => {
                         </div>
                     </div> 
                     <div className="w-full flex"> 
-                        <Feed/>
+                        <FeedProfile/>
                         {/* <RightBar/> */}
                         <div>
                             <div className="mb-7 px-5 mt-10 ">                         

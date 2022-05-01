@@ -24,24 +24,23 @@ import {
  import { useDisclosure } from '@chakra-ui/react'  
  import Cookies from 'js-cookie'
 
-const Post = ({key, id, username, imagepost, caption, profilepicuser,createdAt}) => { 
-    const { isOpen, onOpen, onClose } = useDisclosure()    
-    const [Like, setLike] = useState(0)
-    const [isLiked, setIsLiked] = useState(false)
+const PostProfile = ({key, id, username, imagepost, caption, profilepicuser,createdAt}) => { 
+    const { isOpen, onOpen, onClose } = useDisclosure()   
     
-    const likeHandler =async () => {  
-        let token = Cookies.get('token') 
+    const onDeleteClick = async () => {
+        let token = Cookies.get('token')
+        console.log('ini key', key)
+        console.log('ini id',id)
         try {
-            await axios.post(`${API_URL}/post/likePost?post_id=${id}`,{
+            await axios.delete(`${API_URL}/post/deletePost?id=${id}`,{
                 headers: {
                     authorization: `bearer ${token}`
                 }
             })
-        } catch (error) {
+        } catch (error) { 
             console.log(error)
-        } 
-        setLike(isLiked ? Like -1 : Like +1)
-        setIsLiked(!isLiked)
+            
+        }
     }
     // const {profilepic} = useUser()
     // const [data, setData] = useState([]) 
@@ -68,12 +67,12 @@ const Post = ({key, id, username, imagepost, caption, profilepicuser,createdAt})
                     <span className="text-xs">{createdAt}</span>
                 </div> 
                 <div> 
-                    {/* <Menu>
+                    <Menu>
                         <MenuButton>
                             <MdMoreVert/>
                         </MenuButton>
                         <MenuList>
-                            <MenuItem>Delete</MenuItem> 
+                            <MenuItem onClick={onDeleteClick}>Delete</MenuItem> 
                             <MenuItem onClick={onOpen}>Edit</MenuItem>
                             <Modal 
                                 isOpen={isOpen}
@@ -96,7 +95,7 @@ const Post = ({key, id, username, imagepost, caption, profilepicuser,createdAt})
                                 </ModalContent>
                             </Modal>  
                         </MenuList>
-                    </Menu> */}
+                    </Menu>
                 </div>
              </div>
              <div className="my-5"> 
@@ -109,9 +108,9 @@ const Post = ({key, id, username, imagepost, caption, profilepicuser,createdAt})
                         <Image src={like}  />
                     </div> 
                     <div className="w-6 h-6 mr-1 cursor-pointer">
-                        <Image onClick={likeHandler} src={heart}  /> 
+                        <Image src={heart}  /> 
                     </div>
-                     <span  className="text-sm">{Like} people like it</span>
+                     <span className="text-sm"> people like it</span>
                  </div>
                  <div>
                      <span className="cursor-pointer border-b-[1px] border-dashed border-gray-500">9 comments</span>
@@ -121,4 +120,4 @@ const Post = ({key, id, username, imagepost, caption, profilepicuser,createdAt})
      )
  } 
 
- export default Post
+ export default PostProfile

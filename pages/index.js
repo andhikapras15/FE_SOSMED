@@ -7,6 +7,6 @@ import Login from './login'
 
 export default function Socialmedia() {
   return (
-    <Home/>
+    <div className='w-full h-screen bg-purple-600'>Socialmedia</div>
   )
 }

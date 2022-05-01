@@ -1,26 +1,30 @@
 // import { data } from "autoprefixer"
 import { API_URL } from "../helpers"
-import Post from "./post"
+import PostProfile from "./postProfile"
 import Share from "./share" 
 import { useState, useEffect } from "react" 
 import axios from "axios" 
 import InfiniteScroll from "react-infinite-scroll-component" 
 import calculateTime from "../helpers/calculateTime" 
-import Image from "next/image"
+import Cookies from 'js-cookie'
 
-const Feed = () => {  
+const FeedProfile = () => {  
     const [data, setData] = useState([])  
     // const [feed, setFeed] = useState([])
     const[hasMore,setHasMore] = useState(true) 
     const [page, setPage] = useState(0)   
-    const limit = 2
+    const limit = 3
 
     const fetchDataScroll = async () => {
-        try {
+        try { 
+            let token = Cookies.get('token')
             const res = await axios.get( 
-                `${API_URL}/post/getPost?page=${page}&limit=${limit}`
+                `${API_URL}/post/getPostById?page=${page}&limit=${limit}`,{
+                    headers: {
+                        authorization: `bearer ${token}`
+                    }}
             ) 
-            if (res.data.length === 0) setHasMore(false)
+            if (res.data.length === 0) {setHasMore(false)}
             setData((prev) => [...prev,...res.data]) 
             setPage((prev) => prev + 1)
         } catch (error) {
@@ -55,16 +59,16 @@ const Feed = () => {
                 }
             >
                 <Share/> 
-                {data.map((post) => (
-                    <Post 
-                    key={post.id}
-                    id={post.id}
-                    username={post.username}
-                    profilepicuser={API_URL + post.profilepic}
-                    numberOfLikes={post.number_of_likes} 
-                    imagepost={API_URL +post.image}
-                    createdAt={calculateTime(post.createdAt)}
-                    caption={post.caption} 
+                {data.map((postProfile) => (
+                    <PostProfile
+                    key={postProfile.id}
+                    id={postProfile.id}
+                    username={postProfile.username}
+                    profilepicuser={API_URL + postProfile.profilepic}
+                    numberOfLikes={postProfile.number_of_likes} 
+                    imagepost={API_URL +postProfile.image}
+                    createdAt={calculateTime(postProfile.createdAt)}
+                    caption={postProfile.caption} 
                     />
                     ))}
             </InfiniteScroll>
@@ -72,4 +76,4 @@ const Feed = () => {
     )
 } 
 
-export default Feed
+export default FeedProfile

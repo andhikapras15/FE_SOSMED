@@ -13,15 +13,15 @@ const RightBar = () => {
                 </div>
                 <span className="font-light text-sm"><b>Asep Kopling</b> and <b>3 other friends</b> have a birthday today</span>
             </div> 
-            <div className="max-w-xs rounded-xl my-7">
-                <Image src={iklan1} />
+            <div className="max-w-xs  my-7">
+                <Image className="rounded-xl z-50" src={iklan1} />
             </div>
             <h4 className="font-semibold mb-5">Online Friends</h4>
             <ul className="m-0 p-0 list-none">
                 <li className="flex items-center mb-4">
                     <div className="mr-3 relative flex"> 
-                        <div className="w-10 h-10 rounded-full object-cover">
-                            <Image src={profile2} />
+                        <div className="w-10 h-10  object-cover">
+                            <Image clasname="rounded-full" src={profile2} />
                         </div>
                         <span className="w-3 h-3 rounded-full bg-green-500 absolute top-[-2px] right-0 border-2 border-white"></span>
                     </div> 
