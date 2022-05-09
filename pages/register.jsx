@@ -3,7 +3,7 @@ import { useState } from "react"
 import {connect, useSelector} from 'react-redux'
 import {registerActions} from '../redux/actions/userActions.jsx' 
 import { toast } from "react-toastify";  
-import {AiFillEye} from "react-icons/ai"
+import {BsEyeFill,BsEyeSlashFill} from 'react-icons/bs'
 import * as Yup from "yup" 
 import { 
     InputRightElement, 
@@ -26,8 +26,11 @@ const Register = ({registerActions}) => {
     //     setinput({...input, [prop]: e.target.value})
     // }   
     
-    const [show, setShow] = React.useState(false)
+    const [show, setShow] = useState(false)
     const handleClick = () => setShow(!show) 
+
+    const [show1, setShow1] = useState(false)
+    const handleClick1 = () => setShow1(!show1)
 
     const [dissableButton, setdissableButton]  = useState(false)
     
@@ -89,22 +92,24 @@ const Register = ({registerActions}) => {
                     <div className="h-min-full p-5 bg-white rounded-xl flex flex-col justify-between" >
                         <form onSubmit={formik.handleSubmit} className="h-[350px]"> 
                             <div>
-                                <input name="username" className="h-12 w-full rounded-xl border-[1px] border-gray-400 text-lg pl-5 focus:outline-none" placeholder="Username" onChange={formik.handleChange} value={formik.values.username} required></input>
-                                {formik.touched.username && formik.errors.username ? <p>{formik.errors.username}</p> : null}   
+                                <input name="username" className="h-12 mb-1 mt-1 w-full rounded-xl border-[1px] border-gray-400 text-lg pl-5 focus:outline-none" placeholder="Username" onChange={formik.handleChange} value={formik.values.username} onBlur={formik.handleBlur} required></input>
+                                {formik.touched.username && formik.errors.username ? <p className="text-sm ml-2 text-red-600">{formik.errors.username}</p> : null}   
                             </div> 
                             <div>
-                                <input name="email" className="h-12 w-full rounded-xl border-[1px] border-gray-400 text-lg pl-5 focus:outline-none" placeholder="Email" onChange={formik.handleChange} value={formik.values.email} required></input>  
-                                {formik.touched.email && formik.errors.email ? <p>{formik.errors.email}</p> : null}   
+                                <input name="email" className="h-12 mb-1 mt-1 w-full rounded-xl border-[1px] border-gray-400 text-lg pl-5 focus:outline-none" placeholder="Email" onChange={formik.handleChange} value={formik.values.email} onBlur={formik.handleBlur} required></input>  
+                                {formik.touched.email && formik.errors.email ? <p className="text-sm ml-2 text-red-600">{formik.errors.email}</p> : null}   
                             </div>
-                            <div>
-                                <input name="password" type="password" className="h-12 w-full rounded-xl border-[1px] border-gray-400 text-lg pl-5 focus:outline-none" placeholder="Password" onChange={formik.handleChange} value={formik.values.password} required></input>
-                                {formik.touched.password && formik.errors.password ? <p>{formik.errors.password}</p> : null}   
+                            <div className="flex flex-col relative">
+                                <input name="password" type={show ? 'text':'password'} className="h-12 mb-1 mt-1 w-full rounded-xl border-[1px] border-gray-400 text-lg pl-5 focus:outline-none" placeholder="Password" onChange={formik.handleChange} value={formik.values.password} onBlur={formik.handleBlur} required></input>
+                                {formik.touched.password && formik.errors.password ? <p className="text-sm ml-2 text-red-600">{formik.errors.password}</p> : null}   
+                                <div className="mt-5 right-4 absolute" onClick={handleClick}>{show?<BsEyeFill/>:<BsEyeSlashFill/>}</div>
                             </div> 
-                            <div>
-                                <input name="confirmPassword" type="password" className="h-12 w-full rounded-xl border-[1px] border-gray-400 text-lg pl-5 focus:outline-none" placeholder="Confirm Password" onChange={formik.handleChange} value={formik.values.confirmPassword} required></input>
-                                {formik.touched.confirmPassword && formik.errors.confirmPassword ? <p>{formik.errors.confirmPassword}</p> : null}   
+                            <div className="flex flex-col relative">
+                                <input name="confirmPassword" type={show1 ? 'text':'password'} className="h-12 mb-1 mt-1 w-full rounded-xl border-[1px] border-gray-400 text-lg pl-5 focus:outline-none" placeholder="Confirm Password" onChange={formik.handleChange} value={formik.values.confirmPassword} onBlur={formik.handleBlur} required></input>
+                                {formik.touched.confirmPassword && formik.errors.confirmPassword ? <p className="text-sm ml-2 text-red-600">{formik.errors.confirmPassword}</p> : null}   
+                                <div className="mt-5 right-4 absolute" onClick={handleClick1}>{show1?<BsEyeFill/>:<BsEyeSlashFill/>}</div>
                             </div>
-                            <button type="submit" className="w-full mb-4 h-12 self-center rounded-xl border-0 bg-green-500 text-white text-xl font-medium cursor-pointer">Register</button>
+                            <button type="submit" className="w-full mb-4 mt-1 h-12 self-center rounded-xl border-0 bg-green-500 text-white text-xl font-medium cursor-pointer">Register</button>
                         </form>
                     </div>
                 </div>

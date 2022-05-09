@@ -40,7 +40,24 @@ const PostProfile = ({key, id, username, imagepost, caption, profilepicuser,crea
         } catch (error) { 
             console.log(error)
             
-        }
+        } 
+    } 
+
+    const [editCaption, setEditCaption] = useState(caption)
+    const editPostCaption = async (e) => {
+        e.preventDefault()
+        let token = Cookies.get('token')
+        try {
+            await axios.put(`${API_URL}/post/editCaption?post_id=${id}`,
+            {caption: editCaption}, {
+                headers: {
+                    authorization: `bearer ${token}`
+                }
+            })
+        } catch (error) {
+            console.log(error)
+        } 
+        onClose()
     }
     // const {profilepic} = useUser()
     // const [data, setData] = useState([]) 
@@ -83,14 +100,14 @@ const PostProfile = ({key, id, username, imagepost, caption, profilepicuser,crea
                                     <ModalHeader>Edit Post</ModalHeader>
                                     <ModalCloseButton />
                                     <ModalBody> 
-                                        <input type="file" name="image" accept=".gif,.jpg,.jpeg,.png" /> 
+                                        <input type="text" value={editCaption} name="editCaption" placeholder="Edit Your Caption Here" onChange={(e) => {setEditCaption(e.target.value)}}/> 
                                     </ModalBody>
 
                                     <ModalFooter>
                                         <Button colorScheme='blue' mr={3} onClick={onClose}>
                                         Close
                                         </Button>
-                                        <Button variant='ghost' onClickx>Save</Button>
+                                        <Button variant='ghost' onClick={editPostCaption}>Save</Button>
                                  </ModalFooter>
                                 </ModalContent>
                             </Modal>  

@@ -6,12 +6,15 @@ import { useState, useEffect } from "react"
 import axios from "axios" 
 import InfiniteScroll from "react-infinite-scroll-component" 
 import calculateTime from "../helpers/calculateTime" 
-import Image from "next/image"
+import Image from "next/image" 
+import Cookies from 'js-cookie'
 
 const Feed = () => {  
     const [data, setData] = useState([])  
     // const [feed, setFeed] = useState([])
-    const[hasMore,setHasMore] = useState(true) 
+    const[hasMore,setHasMore] = useState(true)  
+    const [commentsData, setCommentsData] = useState ([])
+
     const [page, setPage] = useState(0)   
     const limit = 2
 
@@ -26,8 +29,25 @@ const Feed = () => {
         } catch (error) {
             console.log (error)
         }
-    }
+    } 
 
+    const fetchComment = async (e) => {
+        let token = Cookies.get('token')
+        try {
+            await axios.get(`${API_URL}/post/getComments?post_id=${id}`,{
+                headers: {
+                    authorization: `bearer ${token}`
+                }
+            })
+            setCommentsData(res.data)
+        } catch (error) {
+            console.log(error)
+        }
+    } 
+
+    useEffect(() => {
+        fetchComment()
+    }, []) 
     // const fetchData = async () => {
     //     try {
     //         let res = await axios.get(`${API_URL}/post/getPost`) 
@@ -42,7 +62,7 @@ const Feed = () => {
     }, []) 
 
     return (
-        <div className="max-w-xl p-5"> 
+        <div className="w-6/12 p-5"> 
             <InfiniteScroll 
             dataLength={data.length} //This is important field to render the next data
             next={fetchDataScroll}
@@ -59,12 +79,15 @@ const Feed = () => {
                     <Post 
                     key={post.id}
                     id={post.id}
-                    username={post.username}
+                    usernameuser={post.username}
                     profilepicuser={API_URL + post.profilepic}
                     numberOfLikes={post.number_of_likes} 
                     imagepost={API_URL +post.image}
                     createdAt={calculateTime(post.createdAt)}
-                    caption={post.caption} 
+                    caption={post.caption}   
+                    comments={post.comments}   
+                    commentsData={commentsData}   
+
                     />
                     ))}
             </InfiniteScroll>

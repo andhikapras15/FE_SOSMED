@@ -4,7 +4,8 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import useUser from "../../hooks/useUser";
+import useUser from "../../hooks/useUser"; 
+import clap from "../../public/clap.gif"
 
 const Verified = (props) => {
   const router = useRouter();
@@ -61,25 +62,27 @@ const Verified = (props) => {
   }
 
   if (status === 1) {
-    return (
-      <div className="flex justify-center items-center">
-        <div>yeayy berhasill verified</div>
-        <div>
-          <Link href="/login">sini login</Link>
+    return ( 
+      <div className="bg-purple-600 h-screen py-24">
+        <div className="flex justify-center items-center">
+          <div className="text-2xl text-white mb-6">yeayy you have been successfully verified</div> 
+          <img src={"/clap.gif"}/>
         </div>
+        <Link href="/login" className="flex justify-center items-center">
+          <button className="w-56 h-12 self-center rounded-xl border-0 bg-green-500 text-white text-xl font-medium cursor-pointer">Login Here</button>
+        </Link> 
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col justify-center items-center">
-      <div>gagal verified</div>
+    <div className="bg-purple-600 h-screen flex flex-col justify-center items-center">
+      <div className="text-2xl text-white mb-6">Sorry, failed to verified your account</div>
       <div>
         {/* {kalo belum login jangan sediakan button} */}
-        {isLogin ? (
-          <button className="bg-slate-300" onClick={sendEmail}>
-            kriim ulang bro
-          </button>
+        {isLogin ? ( 
+          <button className="w-64 h-12 self-center rounded-xl border-0 bg-green-500 text-white text-xl font-medium cursor-pointer"onClick={sendEmail}>Send Email Verified Again</button>
+
         ) : null}
       </div>
     </div>

@@ -46,7 +46,7 @@ const FeedProfile = () => {
     }, []) 
 
     return (
-        <div className="max-w-xl p-5"> 
+        <div className="w-5/6 p-5"> 
             <InfiniteScroll 
             dataLength={data.length} //This is important field to render the next data
             next={fetchDataScroll}
