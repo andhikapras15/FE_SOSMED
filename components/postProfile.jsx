@@ -23,8 +23,10 @@ import {
  } from "@chakra-ui/react" 
  import { useDisclosure } from '@chakra-ui/react'  
  import Cookies from 'js-cookie'
+ import {BsHeartFill, BsHeart} from 'react-icons/bs'
 
-const PostProfile = ({key, id, username, imagepost, caption, profilepicuser,createdAt}) => { 
+
+const PostProfile = ({key, id, username, imagepost, caption, profilepicuser,createdAt,liked,numberOfLikes}) => { 
     const { isOpen, onOpen, onClose } = useDisclosure()   
     
     const onDeleteClick = async () => {
@@ -32,14 +34,13 @@ const PostProfile = ({key, id, username, imagepost, caption, profilepicuser,crea
         console.log('ini key', key)
         console.log('ini id',id)
         try {
-            await axios.delete(`${API_URL}/post/deletePost?id=${id}`,{
+            await axios.delete(`${API_URL}/post/deletePost?post_id=${id}`,{
                 headers: {
                     authorization: `bearer ${token}`
                 }
             })
         } catch (error) { 
             console.log(error)
-            
         } 
     } 
 
@@ -122,12 +123,13 @@ const PostProfile = ({key, id, username, imagepost, caption, profilepicuser,crea
              <div className="flex items-center justify-between"> 
                  <div className="flex"> 
                     <div className="w-6 h-6 mr-1 cursor-pointer">
-                        <Image src={like}  />
+                        <Image src={like} className="-z-50"  />
                     </div> 
                     <div className="w-6 h-6 mr-1 cursor-pointer">
-                        <Image src={heart}  /> 
+                        {/* <Image src={heart} className="-z-50" />  */}
+                        {liked ? (<BsHeartFill className="text-red-600 text-2xl"/>):<BsHeart className="text-2xl"/>}
                     </div>
-                     <span className="text-sm"> people like it</span>
+                     <span className="text-sm">{numberOfLikes} people like it</span>
                  </div>
                  <div>
                      <span className="cursor-pointer border-b-[1px] border-dashed border-gray-500">9 comments</span>

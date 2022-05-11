@@ -19,9 +19,14 @@ const Feed = () => {
     const limit = 2
 
     const fetchDataScroll = async () => {
+        let token = Cookies.get('token')
         try {
             const res = await axios.get( 
-                `${API_URL}/post/getPost?page=${page}&limit=${limit}`
+                `${API_URL}/post/getPost?page=${page}&limit=${limit}`,{
+                    headers: {
+                        authorization: `bearer ${token}`
+                    }
+                }
             ) 
             if (res.data.length === 0) setHasMore(false)
             setData((prev) => [...prev,...res.data]) 
@@ -87,7 +92,7 @@ const Feed = () => {
                     caption={post.caption}   
                     comments={post.comments}   
                     commentsData={commentsData}   
-
+                    liked={post.already_like}
                     />
                     ))}
             </InfiniteScroll>

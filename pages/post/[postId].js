@@ -46,6 +46,19 @@ const PostById = () => {
         } catch (error) {
             console.log(error)
         }
+    } 
+
+    const totalComments = async () => {
+        let token = Cookies.get('token')
+        try {
+            await axios.get(`${API_URL}/post/countComments/${postId}`, {
+                headers: {
+                    authorization: `bearer ${token}`
+                }
+            })
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     const commentPost = async (comment) => {
@@ -102,20 +115,19 @@ const PostById = () => {
         onClose()
     }  
 
-    const likeHandler =async (e) => {   
-        e.preventDefault()
+    const likeHandler =async () => {   
         let token = Cookies.get('token') 
         try {
-            await axios.post(`${API_URL}/post/likePost?post_id=${postId}`,null,{
+            return await axios.post(`${API_URL}/post/likePost?post_id=${postId}`,null,{
                 headers: {
                     authorization: `bearer ${token}`
                 }
             })
         } catch (error) {
             console.log(error)
-        } 
-        setLike(isLiked ? Like -1 : Like +1)
-        setIsLiked(!isLiked)
+        } finally {
+            getPostByPostId()
+        }
     }  
 
     return (
@@ -137,6 +149,8 @@ const PostById = () => {
                 sendComment={sendComment} 
                 editPostCaption={editPostCaption} 
                 likePost={likeHandler}
+                liked={post.already_like}
+                countComments={totalComments()}
                 />
             ))}
         </div>

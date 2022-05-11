@@ -23,16 +23,14 @@ import like from '../public/like.png'
 import { API_URL } from "../helpers" 
 import Share from "./share"
 import axios from "axios"
-
 import useUser from "../hooks/useUser"
-
- import { useDisclosure } from '@chakra-ui/react'  
- import Cookies from "js-cookie"
- import SendIcon from '@mui/icons-material/Send';
+import { useDisclosure } from '@chakra-ui/react'  
+import Cookies from "js-cookie"
+import SendIcon from '@mui/icons-material/Send';
 import calculateTime from "../helpers/calculateTime"
-import Link from "next/link"
+import {BsHeartFill, BsHeart} from 'react-icons/bs'
 
-const PostDetails = ({ usernameuser, imagepost, caption, profilepicuser,createdAt, numberOfLikes,commentsData,userId, sendComment,editPostCaption,likePost})=>{
+const PostDetails = ({ usernameuser, imagepost, caption, profilepicuser,createdAt, numberOfLikes,commentsData,userId, sendComment,editPostCaption,likePost,liked})=>{
      const [comment,setComment] = useState("") 
      const [commentMore, setCommentMore] = useState(5)
      const showMore = () => {
@@ -41,6 +39,10 @@ const PostDetails = ({ usernameuser, imagepost, caption, profilepicuser,createdA
      const showLess = () => {
          setCommentMore(5)
      }
+
+     const {id, isLogin, profilepic, fullname, isVerified} = useUser()
+     const avatar = profilepic ? `${API_URL+ profilepic}` : `${API_URL}/avatar.jpg` 
+
     
      const sendPostDetail = async (e) => {
           e.preventDefault()
@@ -108,14 +110,15 @@ const PostDetails = ({ usernameuser, imagepost, caption, profilepicuser,createdA
                     <div className="w-6 h-6 mr-1 cursor-pointer">
                         <Image src={like}  />
                     </div> 
-                    <div className="w-6 h-6 mr-1 cursor-pointer">
+                    {liked ? (<BsHeartFill className="text-red-600 text-2xl" onClick={likePostDetail}/>):<BsHeart className="text-2xl" onClick={likePostDetail}/>}
+                    {/* <div className="w-6 h-6 mr-1 cursor-pointer">
                         <Image src={heart}  /> 
-                    </div>
-                     <span  className="text-sm">{numberOfLikes}people like it</span>
+                    </div> */}
+                     <span  className="text-sm ml-2">{numberOfLikes} people like it</span>
                  </div> 
-                 <div>
+                 {/* <div>
                      <span className="cursor-pointer border-b-[1px] border-dashed border-gray-500">9 comments</span>
-                 </div>
+                 </div> */}
              </div>
              {commentsData.slice(0,commentMore).map((val)=>{ 
                   return (
@@ -141,15 +144,17 @@ const PostDetails = ({ usernameuser, imagepost, caption, profilepicuser,createdA
              </div>
                <div className="flex">
                     <div className="mr-3">
-                        <img src={profilepicuser} className="w-8 h-8 rounded-full object-cover"/>
+                        <img src={avatar} className="w-8 h-8 rounded-full object-cover"/>
                     </div> 
                     <div className="flex-col">
-                        <span className="text-sm font-semibold mr-64">{usernameuser}</span> 
+                        <span className="text-sm font-semibold mr-64 mb-2">{fullname}</span> 
                         <div> 
+                            {isVerified === 0 ? null :
                             <form onSubmit={sendPostDetail}>
-                                <input placeholder="Comment here" className="border-0 focus:outline-none w-full" onChange={(e) => {setComment(e.target.value)}}/>
-                            </form>
-                            <SendIcon onClick={sendPostDetail}/>
+                                <Textarea placeholder="Comment here" className="border-0 focus:outline-none w-full mt-2" onChange={(e) => {setComment(e.target.value)}}/>
+                                {comment.length <= 300 ? (<div className="text-sm font-extralight">{comment.length}/300</div>) : <div className="text-sm font-light text-red-600 disabled">{comment.length}/300</div>}
+                            </form>}
+                            {comment.length <= 300 ? (<SendIcon className="cursor-pointer" onClick={sendPostDetail}/>) : <SendIcon className="opacity-0" onClick={sendPostDetail}/>}
                         </div>
                     </div>
                </div>

@@ -19,18 +19,20 @@ import {
     ModalFooter,
     ModalBody,
     ModalCloseButton, 
-    Textarea 
+    Textarea, 
   } from '@chakra-ui/react' 
 import { useDisclosure } from '@chakra-ui/react'  
 import useUser from '../hooks/useUser' 
 import { API_URL} from "../helpers" 
 import Cookies from 'js-cookie'
 import { editBioActions} from "../redux/actions/userActions" 
-import { connect } from "react-redux"
-import FeedProfile from "../components/feedProfile"
+import { connect, useDispatch } from "react-redux"
+import FeedProfile from "../components/feedProfile" 
+import { toast } from "react-toastify"
   
 
 const Profile = ({editBioActions}) => { 
+    const dispatch = useDispatch()
     const { 
         isOpen: bioOpen, 
         onOpen: modalbioOpen, 
@@ -45,7 +47,8 @@ const Profile = ({editBioActions}) => {
     const [input,setinput] = useState({
         // profilepic:"", 
         fullname:"",
-        bio: ""
+        bio: "",
+        username: ""
     })  
     const [value,setValue] = React.useState('') 
     const handleInputChange = (e) => { 
@@ -79,13 +82,14 @@ const Profile = ({editBioActions}) => {
         formData.append('profilepic', selectedImage.file) 
         
         try {
-            await axios.put(`${API_URL}/profile/profile`,formData,{
+            let res = await axios.put(`${API_URL}/profile/profile`,formData,{
                 headers: {
                     authorization: `bearer ${token}`
                 }
-            })   
+            }) 
+            
+           
             profilepicClose()
-
         } catch (error) {
             console.log(error)
         }
@@ -96,9 +100,49 @@ const Profile = ({editBioActions}) => {
         editBioActions(input)
         console.log(input)
         bioClose()
+    }  
+
+    const sendEmailVerified = async () => {
+        try {
+            await axios.post(`${API_URL}/auth/sendemail-verified`,{
+                id,
+                email,
+                username
+            }) 
+            toast.success("Please Check Your Email", {
+                position: "top-right",
+                autoClose: 3000,
+                closeOnClick: true,
+                draggable: true,
+            })
+        } catch (error) {
+            console.log(error)
+        }
     }
+
     
-    const {bio, fullname, profilepic, username, email,id} = useUser()  
+    // const sendEmailVerified = async () => {
+        //     try {
+            //         await axios.post(`${API_URL}/auth/sendemail-verified`,{
+                //             id,
+                //             email,
+                //             username
+                //         }) 
+                //         toast.success("Please Check Your Email", {
+    //             position: "top-right",
+    //             autoClose: 3000,
+    //             closeOnClick: true,
+    //             draggable: true,
+    //         })
+    //     } catch (error) {
+        //         console.log(error)
+        //     }
+        // }
+        
+    const {isVerified, bio, fullname, profilepic, username, email,id} = useUser()  
+    const avatar = profilepic ? `${API_URL+ profilepic}` : `${API_URL}/avatar.jpg` 
+    const yourFullname = fullname ? fullname : 'fullname'
+    const yourBio = bio ? bio : 'bio'
 
     return (
         <div>
@@ -107,10 +151,10 @@ const Profile = ({editBioActions}) => {
                 <SideBar/>
                 <div className="flex-[9] w-full"> 
                     <div className="profile h-80 relative mb-14"> 
-                        <div className="mb-14 z-50">
-                            <img src={"/backgroundprofile.jpg"} className="w-full h-64 object-cover"/>
-                            <img src={`${API_URL+profilepic}`} className="w-[150px] h-[150px] rounded-full object-cover absolute left-0 right-0 top-40 border-2 border-white m-auto"/> 
-                            <AiFillCamera onClick={modalpicOpen} className="ml-96 text-xl cursor-pointer"/>   
+                        <div className="mb-14 ">
+                            <img src={"/backgroundprofile.jpg"}  className="w-full h-64 object-cover absolute -z-50"/>
+                            <img src={avatar}  className="w-[150px] h-[150px] cursor-pointer rounded-full object-cover absolute left-0 right-0 top-40 border-2 border-white m-auto -z-50"/> 
+                            <AiFillCamera onClick={modalpicOpen} className="ml-96 text-xl mb-72 cursor-pointer"/>   
                             <Modal 
                                 isOpen={profilepicOpen}
                                 onClose={profilepicClose}
@@ -134,11 +178,13 @@ const Profile = ({editBioActions}) => {
                                 </ModalContent>
                             </Modal>       
                         </div> 
-                        <div className="flex flex-col items-center justify-center">
-                            <h4 className="text-2xl font-bold">{fullname}</h4> 
+                        <div className="flex flex-col items-center justify-center b-20">
+                            <h4 className="text-xl font-bold -z-50">{yourFullname}</h4> 
+                            {/* <h4 className="text-xl font-bold">@{username}</h4> 
+                            <h4 className="text-xl font-bold">{email}</h4>  */}
                             <div className="flex">
-                                <span className="font-light mr-3">{bio}</span> 
-                                <BsPencilFill onClick={modalbioOpen} className="cursor-pointer"/> 
+                                <span className="text-xl font-light mr-3 -z-50">{yourBio}</span> 
+                                <BsPencilFill onClick={modalbioOpen} className="cursor-pointer "/> 
                                     <Modal
                                         // initialFocusRef={initialRef}
                                         // finalFocusRef={finalRef}
@@ -154,6 +200,11 @@ const Profile = ({editBioActions}) => {
                                                 <FormControl>
                                                 <FormLabel>Fullname</FormLabel>
                                                 <Input name="fullname" value={input.fullname} placeholder='Fullname' onChange={onFileBioChange} />
+                                                </FormControl>
+
+                                                <FormControl>
+                                                <FormLabel>Username</FormLabel>
+                                                <Input name="username" value={input.username} placeholder='Username' onChange={onFileBioChange} />
                                                 </FormControl>
 
                                                 <FormControl mt={4} >
@@ -174,19 +225,23 @@ const Profile = ({editBioActions}) => {
                             </div>
                         </div>
                     </div> 
-                    <div className="w-full flex"> 
+                    <div className="w-full flex mt-10"> 
                         <FeedProfile/>
                         {/* <RightBar/> */}
                         <div>
                             <div className="mb-7 px-5 mt-10 ">                         
-                                <h4 className="text-xl font-bold mb-4">User Information</h4> 
+                                <h4 className="text-xl font-bold mt-10 mb-4">User Information</h4> 
                                 <div>
-                                    <span>City :</span>
-                                    <span>Jakarta</span> 
+                                    <span>Fullname :</span>
+                                    <span> {yourFullname}</span> 
                                 </div>
                                 <div>
-                                    <span>Age : </span>
-                                    <span>24</span> 
+                                    <span>Username : </span>
+                                    <span> {username}</span> 
+                                </div>
+                                <div>
+                                    <span>email : </span>
+                                    <span> {email}</span> 
                                 </div>
                                 <div>
                                     <span>Phone : </span>
@@ -224,8 +279,14 @@ const Profile = ({editBioActions}) => {
                                     <img src={"/profile7.jpg"} className="w-[100px] h-[100px] object-cover rounded-md"/> 
                                     <span>Mamat Kopling</span>
                                 </div> 
-                                
                             </div>
+                            {!isVerified ? (
+                            <div className="p-5">
+                            <p className="mb-2">
+                                Please Verify Your Email Account !
+                            </p>
+                            <button className="w-64 h-12 self-center rounded-xl border-0 bg-green-500 text-white text-xl font-medium cursor-pointer" onClick={sendEmailVerified}>Send Email Verified</button>
+                            </div>):null}
                         </div>
                     </div>
                 </div>

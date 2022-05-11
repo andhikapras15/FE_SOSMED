@@ -7,6 +7,8 @@ import { connect, useSelector } from "react-redux"
 import {loginActions} from '../redux/actions/userActions.jsx'
 import * as Yup from "yup" 
 import { useFormik } from "formik";
+import { toast } from "react-toastify"
+import useUser from "../hooks/useUser.jsx"
 
 
 const Login = ({loginActions}) => { 
@@ -20,8 +22,9 @@ const Login = ({loginActions}) => {
     const {isLogin} = useSelector((state)=> state.user)
     // const handleInput = (e, prop) => {
     //     setinput({...input, [prop]:e.target.value})
+    
     // } 
-
+    const [enableButton, setEnableButton] = useState(false)
     const [show, setShow] = useState(false)
     const handleClick = () => setShow(!show) 
 
@@ -38,9 +41,12 @@ const Login = ({loginActions}) => {
         }), 
         onSubmit: async(values) => { 
             try {
+                setEnableButton(true)
                 loginActions(values)
             } catch (error) {
                 console.log(error)
+            } finally {
+                setEnableButton(false)
             }
         }
     }) 
@@ -83,7 +89,8 @@ const Login = ({loginActions}) => {
                                 {formik.touched.password && formik.errors.password ? <p className="text-sm ml-2 text-red-600">{formik.errors.password}</p> : null}   
                                 <div className="mt-5 right-4 absolute" onClick={handleClick}>{show?<BsEyeFill/>:<BsEyeSlashFill/>}</div>
                             </div>
-                            <button className="h-12 mt-5 w-full rounded-xl border-0 bg-purple-600 text-white text-xl font-medium cursor-pointer">Log In</button> 
+                            {isLogin ? null :  
+                            <button className="h-12 mt-5 w-full rounded-xl border-0 bg-purple-600 text-white text-xl font-medium cursor-pointer">Log In</button> }
                         </form>
                         <span className="text-center text-purple-600">Forgot Password?</span>  
                         <Link href='/register'>

@@ -10,9 +10,12 @@ import {
     Button, 
  } from "@chakra-ui/react"; 
 import { useFormik } from "formik";
+import { useRouter } from "next/router" 
 
 
 const Register = ({registerActions}) => {   
+
+    const router = useRouter()
 
     // const[input,setinput] = useState({
     //     username: '', 
@@ -32,7 +35,7 @@ const Register = ({registerActions}) => {
     const [show1, setShow1] = useState(false)
     const handleClick1 = () => setShow1(!show1)
 
-    const [dissableButton, setdissableButton]  = useState(false)
+    const [disableButton, setdisableButton]  = useState(false)
     
     const formik = useFormik ({
         initialValues: {
@@ -49,23 +52,28 @@ const Register = ({registerActions}) => {
             .email('email is invalid'),
             password: Yup.string()
             .required('password is required')
-            .min(8,'password must be at least 8 characters'),
+            .min(8,'password must be at least 8 characters')
             // .matches(/^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8-20}$/, 'password must be at least 1 number, 1 letter, and 1 special characters'), 
+            .matches(/[A-Z]/g, "Must be at least 1 uppercase letter").matches(/[a-z]/g, "Must be at least 1 lowercase letter").matches(/[0-9]/g, "Must be at least 1 number").matches(/[-._!"`'#%&,:;<>=@{}~\$\(\)\*\+\/\\\?\[\]\^\|]+/g, "Must be at least 1 special character"),
             confirmPassword: Yup.string()
             .required('confirm password is required')
             .oneOf([Yup.ref('password'), null], 'Passwords must match')
         }), 
         onSubmit: async(values) => {
             try {
+                setdisableButton(true)
                 registerActions(values) 
-                setdissableButton(true)
             } catch (error) {
                 console.log(error)
             } finally {
-                setdissableButton(false)
+                setdisableButton(false)
             }
         }
-    }) 
+    })  
+
+    // if(isLogin) {
+    //     router.replace('/profile')
+    // }
 
     // const registerHandle = (e) => {
     //     e.preventDefault()
@@ -109,7 +117,8 @@ const Register = ({registerActions}) => {
                                 {formik.touched.confirmPassword && formik.errors.confirmPassword ? <p className="text-sm ml-2 text-red-600">{formik.errors.confirmPassword}</p> : null}   
                                 <div className="mt-5 right-4 absolute" onClick={handleClick1}>{show1?<BsEyeFill/>:<BsEyeSlashFill/>}</div>
                             </div>
-                            <button type="submit" className="w-full mb-4 mt-1 h-12 self-center rounded-xl border-0 bg-green-500 text-white text-xl font-medium cursor-pointer">Register</button>
+                            {disableButton ? <div ><button disabled type="submit" className="w-full mb-4 mt-1 h-12 self-center rounded-xl border-0 bg-green-500 text-white text-xl font-medium cursor-pointer">Register</button></div> : 
+                            <button type="submit"  className=" w-full mb-4 mt-1 h-12 self-center rounded-xl border-0 bg-green-500 text-white text-xl font-medium cursor-pointer">Register</button>}
                         </form>
                     </div>
                 </div>

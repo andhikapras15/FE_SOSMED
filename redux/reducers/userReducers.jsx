@@ -5,6 +5,7 @@ const INITIAL_STATE = {
     error_mes: "", 
     profilepic: "",
     fullname: "",
+    email:"",
     Bio:"", 
     isVerified: ""
   };
@@ -15,6 +16,8 @@ const INITIAL_STATE = {
         return { ...state, isLogin: true, error_mes: "", ...action.payload };
       case "ERROR":
         return { error_mes: action.payload };
+      case "UPDATEPIC":
+        return {...state, error_mes:"",profilepic: action.payload}
       case "LOGOUT":
         return INITIAL_STATE;
       default:

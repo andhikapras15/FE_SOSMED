@@ -69,6 +69,7 @@ const FeedProfile = () => {
                     imagepost={API_URL +postProfile.image}
                     createdAt={calculateTime(postProfile.createdAt)}
                     caption={postProfile.caption} 
+                    liked={postProfile.already_like}
                     />
                     ))}
             </InfiniteScroll>

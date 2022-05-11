@@ -27,9 +27,10 @@ import {
  import SendIcon from '@mui/icons-material/Send';
 import calculateTime from "../helpers/calculateTime"
 import Link from "next/link"
+import {BsHeartFill, BsHeart} from 'react-icons/bs'
 
 
-const Post = ({key, id, usernameuser, imagepost, caption, profilepicuser,createdAt, numberOfLikes,commentsData}) => { 
+const Post = ({key, id, usernameuser, imagepost, caption, profilepicuser,createdAt, numberOfLikes,commentsData,countComments,liked}) => { 
     const { isOpen, onOpen, onClose } = useDisclosure()    
     const [Like, setLike] = useState(0)
     const [isLiked, setIsLiked] = useState(false) 
@@ -38,6 +39,19 @@ const Post = ({key, id, usernameuser, imagepost, caption, profilepicuser,created
     // const [commentsData, setCommentsData] = useState ([])
 
     const {profilepic} = useUser()  
+
+    // const totalComments = async () => {
+    //     let token = Cookies.get('token')
+    //     try {
+    //         await axios.get(`${API_URL}/post/countComments/${postId}`, {
+    //             headers: {
+    //                 authorization: `bearer ${token}`
+    //             }
+    //         })
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+    // }
     
     // const likeHandler =async (e) => {   
     //     e.preventDefault()
@@ -55,19 +69,19 @@ const Post = ({key, id, usernameuser, imagepost, caption, profilepicuser,created
     //     setIsLiked(!isLiked)
     // }  
 
-    const fetchComment = async (e) => {
-        let token = Cookies.get('token')
-        try {
-            await axios.get(`${API_URL}/post/getComments?post_id=${id}`,{
-                headers: {
-                    authorization: `bearer ${token}`
-                }
-            })
-            setCommentsData(res.data)
-        } catch (error) {
-            console.log(error)
-        }
-    }
+    // const fetchComment = async (e) => {
+    //     let token = Cookies.get('token')
+    //     try {
+    //         await axios.get(`${API_URL}/post/getComments?post_id=${id}`,{
+    //             headers: {
+    //                 authorization: `bearer ${token}`
+    //             }
+    //         })
+    //         setCommentsData(res.data)
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+    // }
     
     // const sendComment = async (e) => {  
     //     e.preventDefault()
@@ -115,7 +129,7 @@ const Post = ({key, id, usernameuser, imagepost, caption, profilepicuser,created
                            <MdMoreVert/>
                         </MenuButton>
                         <MenuList>
-                            <MenuItem>Delete</MenuItem> 
+                            {/* <MenuItem>Delete</MenuItem>  */}
                             <Link href={`/post/${id}`}>
                                 <MenuItem onClick={onOpen}>Details</MenuItem>  
                             </Link>
@@ -130,18 +144,23 @@ const Post = ({key, id, usernameuser, imagepost, caption, profilepicuser,created
              <div className="flex items-center justify-between mb-5"> 
                  <div className="flex"> 
                     <div className="w-6 h-6 mr-1 cursor-pointer">
-                        <Image src={like}  />
+                        <Image className="-z-50" src={like}  />
                     </div> 
                     <div className="w-6 h-6 mr-1 cursor-pointer">
-                        <Image  src={heart}  /> 
+                        {/* <Image className="-z-50" src={heart}  />  */}
+                        <Link href={`/post/${id}`}>
+                            {liked ? (<BsHeartFill className="text-red-600 text-2xl"/>):<BsHeart className="text-2xl"/>}
+                        </Link>
                     </div>
-                     <span  className="text-sm">{numberOfLikes}people like it</span>
+                     <span  className="text-sm">{numberOfLikes} people like it</span>
                  </div>
-                 {/* <div>
-                     <span className="cursor-pointer border-b-[1px] border-dashed border-gray-500">9 comments</span>
-                 </div> */} 
+                 <div>
+                     <Link href={`/post/${id}`}>
+                        <span className="cursor-pointer border-b-[1px] border-dashed border-gray-500">{countComments} comments</span>
+                     </Link>
+                 </div>  
              </div>
-             {commentsData.map((val)=>{ 
+             {/* {commentsData.map((val)=>{ 
                   return (
                      <div className="mb-4">
                         <div className="flex">
@@ -156,41 +175,7 @@ const Post = ({key, id, usernameuser, imagepost, caption, profilepicuser,created
                         </div> 
                      </div>
                   )
-             })} 
-             {/* {comments.slice(0, commentToShow).map((val) => {
-              return (
-                <div>
-                  <div className="flex items-center pl-5 py-1">
-                    <img
-                      src={API_URL + val.profilepic}
-                      className="rounded-full h-10 w-10 object-cover border p-1 mr-3"
-                      alt=""
-                    />
-                    <p className="font-semibold text-md">{val.username}</p>
-                  </div>
-                  <p className="font-normal text-md ml-16 pl-2 -mt-3">
-                    {val.comment}
-                  </p>
-                  <p className="ml-16 pl-2  font-thin text-xs">
-                    {calculateTime(val.createdAt)}
-                  </p>
-                </div>
-              );
-            })} */}
-                <div className="flex">
-                    <div className="mr-3">
-                        <img src={`${API_URL+profilepic}`} className="w-8 h-8 rounded-full object-cover"/>
-                    </div> 
-                    <div className="flex-col">
-                        <span className="text-sm font-semibold mr-64">username</span> 
-                        <div> 
-                            {/* <form onSubmit={sendComment}> */}
-                                <input placeholder="Comment here" className="border-0 focus:outline-none w-full" onChange={(e) => {setComment(e.target.value)}}/>
-                            {/* </form> */}
-                            {/* <SendIcon onClick={sendComment}/> */}
-                        </div>
-                    </div>
-                </div>
+             })}  */}
          </div>
      )
  } 

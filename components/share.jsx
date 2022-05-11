@@ -6,8 +6,13 @@ import { postActions } from "../redux/actions/postActions"
 import axios from "axios"
 import { API_URL } from "../helpers" 
 import Cookies from "js-cookie"
+import useUser from '../hooks/useUser' 
+
 
 const Share = () => {  
+    const {isVerified, profilepic, isLogin} = useUser() 
+    const avatar = profilepic ? `${API_URL+profilepic}` : `${API_URL}/avatar.jpg`
+
     const [input,setInput] = useState({
         caption:""
     })
@@ -54,7 +59,7 @@ const Share = () => {
     return (
         <div className="w-full min-sh-44 rounded-xl shadow-xl p-3 ">
             <div className="flex items-center"> 
-                <img src={"/profile1.jpg"} className="w-12 h-12 rounded-full object-cover mr-3"/> 
+                <img src={avatar} className="w-12 h-12 rounded-full object-cover mr-3"/> 
                 <input placeholder="What's in your mind ?" name="caption" value={input.caption} className="border-0 w-[80%] focus:outline-none" onChange={onFileCaptionChange}/>
             </div> 
             <hr className="m-5"/>
@@ -80,7 +85,7 @@ const Share = () => {
                     <MdEmojiEmotions className="text-lg mr-1"/>
                     <span className="text-sm font-medium">Feelings</span>
                 </div>
-                <button className="border-0 p-2 rounded-md bg-green-500 font-medium mr-5 text-white" onClick={onSavePostClick}>Share</button>
+                {isVerified === 0 ? null : <button className="border-0 p-2 rounded-md bg-green-500 font-medium mr-5 text-white" onClick={onSavePostClick}>Share</button>}
             </div>
         </div>
     )
